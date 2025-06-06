@@ -15,3 +15,18 @@ ollama run llama3.2:latest
 ```
 
 The Python API server will connect to Ollama running on localhost:11434 by default.
+
+### Python API Setup
+
+1. Install Python dependencies:
+```bash
+cd classify_query
+pip install -r requirements.txt
+```
+
+2. Train the classifier:
+```bash
+python fine_tune.py
+```
+
+This will train the classifier on the financial intents dataset and save the model for use by the API server.
