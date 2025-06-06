@@ -1,0 +1,20 @@
+<%= tag.div id: dom_id(chat_message), class: "flex flex-col" do %>
+  <div
+    class="
+      self-end bg-blue-500 text-white rounded-lg rounded-br-none px-4 py-2 max-w-[80%]
+      break-words
+    "
+  >
+    <%= chat_message.message %>
+  </div>
+  <% if chat_message.response.present? %>
+    <div
+      class="
+        self-start bg-gray-100 text-gray-800 rounded-lg rounded-bl-none px-4 py-2
+        max-w-[80%] break-words
+      "
+    >
+      <%= chat_message.response %>
+    </div>
+  <% end %>
+<% end %>

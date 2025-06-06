@@ -1,0 +1,12 @@
+<div>
+  Logado como:
+  <p class="font-bold">
+    <%= Current.user.email_address %>
+  </p>
+
+  <%= button_to "Sair",
+  session_path,
+  method: :delete,
+  class:
+    "flex items-center justify-center text-white rounded-xl bg-red-500 px-4 py-1.5" %>
+</div>
