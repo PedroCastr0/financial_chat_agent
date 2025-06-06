@@ -1,1 +1,7 @@
 @import "tailwindcss";
+
+/*
+  Tell Tailwind to ignore the classify_query directory.
+  The path is relative to this CSS file.
+*/
+@source not "../../../classify_query";

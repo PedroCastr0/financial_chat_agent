@@ -35,3 +35,23 @@
 
 /app/assets/builds/*
 !/app/assets/builds/.keep
+
+# ===================================================================
+# Python / Machine Learning (in classify_query/)
+# ===================================================================
+# Virtual Environments
+/classify_query/.venv
+/classify_query/venv/
+/classify_query/env/
+
+# Python caches
+/classify_query/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# ML Model Artifacts (CRITICAL)
+# Trained models are large and should be stored in artifact storage like S3, GCS, or Hugging Face Hub.
+/classify_query/fine_tuned_model/
+/classify_query/training_output/
+

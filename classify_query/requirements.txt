@@ -1,0 +1,10 @@
+# requirements.txt
+transformers
+datasets
+pandas
+torch
+scikit-learn
+accelerate
+fastapi
+uvicorn
+pydantic

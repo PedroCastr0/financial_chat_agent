@@ -1,12 +1,120 @@
-<div>
-  Logado como:
-  <p class="font-bold">
-    <%= Current.user.email_address %>
-  </p>
+<div class="container mx-auto px-4 py-8">
+  <div class="flex justify-between items-center mb-8">
+    <div>
+      <h1 class="text-2xl font-bold">Financial Dashboard</h1>
+      <p class="text-gray-600">Welcome back, <%= Current.user.email_address %></p>
+    </div>
+    <%= button_to "Sign Out",
+        session_path,
+        method: :delete,
+        class: "flex items-center justify-center text-white rounded-xl bg-red-500 px-4 py-1.5" %>
+  </div>
 
-  <%= button_to "Sair",
-  session_path,
-  method: :delete,
-  class:
-    "flex items-center justify-center text-white rounded-xl bg-red-500 px-4 py-1.5" %>
+  <!-- Financial Overview Cards -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+    <div class="bg-white rounded-lg shadow p-6">
+      <h3 class="text-lg font-semibold text-gray-700 mb-2">Total Balance</h3>
+      <p class="text-3xl font-bold text-green-600">$<%= number_with_precision(Current.user.total_balance, precision: 2) %></p>
+    </div>
+    <div class="bg-white rounded-lg shadow p-6">
+      <h3 class="text-lg font-semibold text-gray-700 mb-2">Monthly Income</h3>
+      <p class="text-3xl font-bold text-blue-600">$<%= number_with_precision(Current.user.monthly_income, precision: 2) %></p>
+    </div>
+    <div class="bg-white rounded-lg shadow p-6">
+      <h3 class="text-lg font-semibold text-gray-700 mb-2">Monthly Spending</h3>
+      <p class="text-3xl font-bold text-red-600">$<%= number_with_precision(Current.user.monthly_spending, precision: 2) %></p>
+    </div>
+  </div>
+
+  <!-- Charts Section -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+    <!-- Spending by Category Chart -->
+    <div class="bg-white rounded-lg shadow p-6">
+      <h3 class="text-lg font-semibold text-gray-700 mb-4">Spending by Category</h3>
+      <div class="h-48">
+        <%= pie_chart Current.user.recent_transactions
+            .where(transaction_type: 'debit')
+            .group(:category)
+            .sum(:amount),
+            colors: ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899', '#14B8A6', '#F97316'],
+            donut: true,
+            legend: true,
+            height: "200px" %>
+      </div>
+    </div>
+
+    <!-- Daily Spending Trend -->
+    <div class="bg-white rounded-lg shadow p-6">
+      <h3 class="text-lg font-semibold text-gray-700 mb-4">Daily Spending Trend</h3>
+      <div class="h-48">
+        <%= line_chart (30.days.ago.to_date..Date.today).map { |date|
+          [
+            date.strftime('%b %d'),
+            Current.user.recent_transactions
+              .where(transaction_type: 'debit')
+              .where(transaction_date: date.beginning_of_day..date.end_of_day)
+              .sum(:amount)
+          ]
+        }, 
+        colors: ['#EF4444'],
+        curve: true,
+        legend: false,
+        min: 0,
+        height: "200px" %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Accounts Section -->
+  <div class="bg-white rounded-lg shadow mb-8">
+    <div class="p-6">
+      <h2 class="text-xl font-bold mb-4">Your Accounts</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <% Current.user.accounts.each do |account| %>
+          <div class="border rounded-lg p-4">
+            <h3 class="font-semibold capitalize"><%= account.account_type %></h3>
+            <p class="text-2xl font-bold">$<%= number_with_precision(account.balance, precision: 2) %></p>
+            <p class="text-sm text-gray-500">Account: <%= account.account_number %></p>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Transactions -->
+  <div class="bg-white rounded-lg shadow">
+    <div class="p-6">
+      <h2 class="text-xl font-bold mb-4">Recent Transactions</h2>
+      <div class="overflow-x-auto">
+        <table class="min-w-full">
+          <thead>
+            <tr class="bg-gray-50">
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            <% Current.user.recent_transactions.each do |transaction| %>
+              <tr>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <%= transaction.transaction_date.strftime("%b %d, %Y") %>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <%= transaction.description %>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 capitalize">
+                  <%= transaction.category %>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm <%= transaction.transaction_type == 'credit' ? 'text-green-600' : 'text-red-600' %>">
+                  <%= transaction.transaction_type == 'credit' ? '+' : '-' %>$<%= number_with_precision(transaction.amount, precision: 2) %></p>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
 </div>

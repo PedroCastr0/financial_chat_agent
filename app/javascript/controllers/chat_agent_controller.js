@@ -2,18 +2,10 @@ import { Controller } from "@hotwired/stimulus";
 
 // Connects to data-controller="chat-agent"
 export default class extends Controller {
-  static targets = ["interface", "input", "messages"];
-  connect() {
-    this.observer = new MutationObserver((mutations) => {
-      this.scrollToBottom();
-    });
-    this.observer.observe(this.messagesTarget, { childList: true });
-  }
+  static targets = ["interface", "input", "messages", "message"];
 
-  disconnect() {
-    if (this.observer) {
-      this.observer.disconnect();
-    }
+  messageTargetConnected(target) {
+    this.scrollToBottom();
   }
 
   toggleChat() {

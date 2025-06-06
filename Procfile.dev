@@ -1,2 +1,3 @@
 web: bin/rails server
 css: bin/rails tailwindcss:watch
+classify_api: python3 classify_query/api.py
