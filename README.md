@@ -19,12 +19,14 @@ The Python API server will connect to Ollama running on localhost:11434 by defau
 ### Python API Setup
 
 1. Install Python dependencies:
+
 ```bash
 cd classify_query
 pip install -r requirements.txt
 ```
 
 2. Train the classifier:
+
 ```bash
 python fine_tune.py
 ```
